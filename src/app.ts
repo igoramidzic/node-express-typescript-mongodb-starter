@@ -10,9 +10,6 @@ import { MONGODB_URI, SESSION_SECRET } from "./util/secrets"
 
 const MongoStore = mongo(session)
 
-// Controllers (route handlers)
-import * as apiController from "./controllers/api"
-
 // Create Express server
 const app = express()
 
@@ -48,9 +45,27 @@ app.use((req, res, next) => {
     next()
 })
 
+// API keys and Passport configuration
+import * as passportConfig from "./config/passport"
+
 /**
  * API examples routes.
  */
-app.get("/api", apiController.getApi)
+app.use("/api", require('./api/controllers/index'))
+
+/**
+ * OAuth authentication routes. (Sign in)
+ */
+app.get("/auth/facebook", passport.authenticate("facebook", { scope: ["email", "public_profile"] }, (res) => {
+    console.log(res)
+}))
+app.get("/auth/facebook/callback", passport.authenticate("facebook"), (req, res) => {
+    res.status(200).json(req.user)
+})
+
+app.get("/auth/logout", passportConfig.isAuthenticated, (req, res) => {
+    req.logOut()
+    res.status(200).json({ message: 'Successful logout' })
+})
 
 export default app
