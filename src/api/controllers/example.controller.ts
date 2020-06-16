@@ -1,5 +1,5 @@
-import { Response, Request, Router } from "express"
-import { getExample } from "../handlers/example.handler"
+import { Response, Request, Router } from 'express'
+import { getExample } from '../handlers/example.handler'
 
 const router: Router = Router()
 
@@ -17,4 +17,4 @@ router.get('', async (req: Request, res: Response) => {
     })
 })
 
-module.exports = router
+export default router
